@@ -7,11 +7,7 @@ import {
   createHttpLink,
 } from "@apollo/client";
 
-// import { createHttpLink } from "apollo-link-http";
-
 import { setContext } from "apollo-link-context";
-
-// const link = createHttpLink({ uri: "/graphql" });
 
 const httpLink = createHttpLink({
   uri: "https://nameless-bastion-67517.herokuapp.com/",
