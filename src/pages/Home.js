@@ -19,7 +19,6 @@ const Home = () => {
     if (data) {
       const { getPosts: res } = data;
       setPosts(res);
-      console.log(res);
     }
   }, [data]);
 
@@ -37,7 +36,7 @@ const Home = () => {
         {loading ? (
           <h1>Loading posts..</h1>
         ) : (
-          <Transition.Group className='post-wrapper'>
+          <Transition.Group>
             {posts &&
               posts.map((post) => (
                 <Grid.Column key={post.id} style={{ marginBottom: 20 }}>

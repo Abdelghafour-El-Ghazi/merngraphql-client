@@ -1,21 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Form } from "semantic-ui-react";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
-import FileBase from "react-file-base64";
 
 import { useForm } from "../util/hooks";
 import { FETCH_POSTS_QUERY } from "../util/graphql";
 
 const PostForm = () => {
-  const [selectedFile, setSelectedFile] = useState("");
   const { values, onChange, onSubmit } = useForm(createPostCallback, {
     body: "",
-    selectedFile,
   });
 
   const [createPost, { error }] = useMutation(CREATE_POST_MUTATION, {
-    variables: { body: values.body, selectedFile },
+    variables: values,
     update(proxy, result) {
       const data = proxy.readQuery({
         query: FETCH_POSTS_QUERY,
@@ -24,7 +21,6 @@ const PostForm = () => {
       proxy.writeQuery({ query: FETCH_POSTS_QUERY, data: { getPosts: posts } });
 
       values.body = "";
-      setSelectedFile("");
     },
     onError(err) {
       console.log(err);
@@ -32,8 +28,6 @@ const PostForm = () => {
   });
 
   function createPostCallback() {
-    console.log(values.body);
-    console.log(selectedFile);
     createPost();
   }
 
@@ -49,16 +43,6 @@ const PostForm = () => {
             value={values.body}
             error={error ? true : false}
           />
-          <div style={{ marginBottom: "20px" }}>
-            <FileBase
-              type='file'
-              multiple={false}
-              onDone={({ base64 }) => {
-                setSelectedFile(base64);
-              }}
-            />
-          </div>
-
           <Button type='submit' color='teal'>
             Submit
           </Button>
@@ -76,8 +60,8 @@ const PostForm = () => {
 };
 
 const CREATE_POST_MUTATION = gql`
-  mutation createPost($body: String!, $selectedFile: String!) {
-    createPost(body: $body, selectedFile: $selectedFile) {
+  mutation createPost($body: String!) {
+    createPost(body: $body) {
       id
       body
       createdAt
